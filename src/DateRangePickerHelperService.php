@@ -1,6 +1,6 @@
 <?php namespace Seblhaire\DateRangePickerHelper;
 
-use Seb\DateRangePickerHelper\DateRangePickerProvider;
+use DateRangePickerProvider;
 
 class DateRangePickerHelperService implements DateRangePickerHelperServiceContract{
 		public static $instances = [];
