@@ -1,4 +1,4 @@
-<?php namespace Seb\DateRangePickerHelper;
+<?php namespace Seblhaire\DateRangePickerHelper;
 
 use Seb\DateRangePickerHelper\DateRangePickerProvider;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Seb\DateRangePickerHelper;
+namespace Seblhaire\DateRangePickerHelper;
 
 use Illuminate\Support\ServiceProvider;
 use App;
