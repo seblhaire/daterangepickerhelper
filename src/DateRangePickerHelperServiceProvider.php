@@ -17,7 +17,7 @@ class DateRangePickerHelperServiceProvider extends ServiceProvider
     {
       $this->loadTranslationsFrom(__DIR__.'/../lang', 'daterangepickerhelper');
       $this->publishes([
-          __DIR__.'/../config/' => config_path(''),
+          __DIR__.'/../config/' => config_path('/'),
           __DIR__.'/../lang' => resource_path('lang/vendor/daterangepickerhelper'),
         ]);
     }
