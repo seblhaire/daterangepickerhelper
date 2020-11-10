@@ -34,9 +34,9 @@ class DateRangePickerProvider{
 		        $this->max = $max;
 		    }
 		    if ($this->checkOptions($options)){
-						$configid = sprintf('daterangepickerhelper.locale.%s', App::getLocale());
+						$configid = sprintf('daterangepickerhelper.locales.%s', App::getLocale());
 						if (is_null(config($configid))){
-								$config = config('daterangepickerhelper.locale.en');
+								$config = config('daterangepickerhelper.locales.en');
 						}else{
 							$config = config($configid);
 						}
