@@ -100,11 +100,11 @@ If your view contains only one DaterangePicker, you can omit calendar id:
 ```
 
 
-## Config Files
+## Config File
 
-Config files are available, either in package directory in vendor\seblhaire/daterangepickerhelper or in
+Config file `daterangepickerhelper.php` is available, either in package directory in vendor/seblhaire/daterangepickerhelper or in
 your app config directory if you publish config. Parameters not language-dependent are in
-`calendar.php`.  Language-dependant parameters are in `{locale}/locales.php`.
+`default` section.  Language-dependant parameters are in `language` section.
 
 ## Parameters
 
