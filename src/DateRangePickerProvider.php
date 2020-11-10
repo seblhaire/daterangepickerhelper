@@ -1,7 +1,7 @@
 <?php namespace Seblhaire\DateRangePickerHelper;
 
 use Carbon\Carbon;
-
+use App;
 class DateRangePickerProvider{
 		private $calendarElement = null;
 	  private $start = null;
@@ -34,8 +34,14 @@ class DateRangePickerProvider{
 		        $this->max = $max;
 		    }
 		    if ($this->checkOptions($options)){
+						$configid = sprintf('daterangepickerhelper.locale.%s', App::getLocale());
+						if (is_null(config($configid))){
+								$config = config('daterangepickerhelper.locale.en');
+						}else{
+							$config = config($configid);
+						}
 		        $this->options = array_replace(
-		            array_merge(config('daterangepickerhelper.default'),config('daterangepickerhelperlocales')),
+		            array_merge(config('daterangepickerhelper.default'), $config),
 		            $options
 		        );
 		    }else{

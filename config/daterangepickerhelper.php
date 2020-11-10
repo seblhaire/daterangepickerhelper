@@ -1,5 +1,30 @@
 <?php
 return [
+    "locales" => [
+      'en' => [
+        'carbonformat' => 'n/d/Y',
+        'carbonformattime' => 'n/d/Y h:i A',
+        'carbonformattimeseconds' => 'n/d/Y h:i:s A',
+        'formatdisplay' => 'M/DD/YYYY',
+        'formatdisplaytime' => 'M/DD/YYYY hh:mm A',
+        'formatdisplaytimeseconds' => 'M/DD/YYYY hh:mm:ss A',
+        //'showISOWeekNumbers' =>  true,
+        'showWeekNumbers' => false,
+        'firstday' => 0
+      ],
+      "fr" => [
+        'carbonformat' => 'd/m/Y',
+        'carbonformattime' => 'd/m/Y H:i',
+        'carbonformattimeseconds' => 'd/m/Y H:i:s',
+        'formatdisplay' => 'DD/MM/YYYY',
+        'formatdisplaytime' => 'DD/MM/YYYY HH:mm',
+        'formatdisplaytimeseconds' => 'DD/MM/YYYY HH:mm:ss',
+        'showISOWeekNumbers' =>  true,
+      //  'showWeekNumbers' => false,
+        'firstday' => 1
+
+      ],
+    ],
     'default' => [
         'icon' => '<i class="fas fa-calendar-alt"></i>',
         "opens" => 'right',
@@ -80,6 +105,6 @@ return [
         "showCalendar.daterangepicker" => '',
         "hideCalendar.daterangepicker" => '',
         "apply.daterangepicker" => '',
-        "cancel.daterangepicker" => ''
+        "cancel.daterangepicker" => '',
     ]
 ];
