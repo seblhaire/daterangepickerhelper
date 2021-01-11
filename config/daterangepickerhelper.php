@@ -8,8 +8,7 @@ return [
         'formatdisplay' => 'M/DD/YYYY',
         'formatdisplaytime' => 'M/DD/YYYY hh:mm A',
         'formatdisplaytimeseconds' => 'M/DD/YYYY hh:mm:ss A',
-        //'showISOWeekNumbers' =>  true,
-        'showWeekNumbers' => false,
+        'showISOWeekNumbers' =>  true,
         'firstday' => 0
       ],
       "fr" => [
@@ -20,7 +19,6 @@ return [
         'formatdisplaytime' => 'DD/MM/YYYY HH:mm',
         'formatdisplaytimeseconds' => 'DD/MM/YYYY HH:mm:ss',
         'showISOWeekNumbers' =>  true,
-      //  'showWeekNumbers' => false,
         'firstday' => 1
 
       ],
@@ -45,7 +43,7 @@ return [
         'timePicker' => false,
         'timePicker24Hour' => true,
         "timePickerSeconds" => false,
-        `timePickerIncrement` => 1,
+        "timePickerIncrement" => 1,
         'dateseparator' => ' - ',
         'firstday' => 1,
         'autoApply' => false,

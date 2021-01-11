@@ -235,9 +235,9 @@ class DateRangePickerProvider{
 			$sStr .= "\"drops\": '" . $this->options['drops'] . "',\n";
 
 			if ($weeknumbers =='iso'){
-					$sStr .= "\"showISOWeekNumbers\": 'true',\n";
+					$sStr .= "\"showISOWeekNumbers\": true,\n";
 			} else if ($weeknumbers =='us'){
-					$sStr .= "\"showWeekNumbers\": 'true',\n";
+					$sStr .= "\"showWeekNumbers\": true,\n";
 			}
 			$sStr .= "\"alwaysShowCalendars\": " . (($this->options['alwaysShowCalendars']) ? 'true' : 'false'). ",\n";
 			if (strlen($this->options['maxSpan']) > 0){

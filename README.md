@@ -22,7 +22,7 @@ And range date picker appears as follow:
 
 1. `composer require seblhaire/daterangepickerhelper`
 
-2. You can either download DateRangePicker on its website or install it with `npm`package manager if you compile your app Javascript files with [Laravel Mix](https://github.com/JeffreyWay/laravel-mix). Same choice for Bootstrap, jQuery and Moment.  `npm install datereangepicker` installs also `jQuery` and `Moment.js`. For Bootstrap use `npm install bootstrap`.
+2. You can either download DateRangePicker on its website or install it with `npm`package manager if you compile your app Javascript files with [Laravel Mix](https://github.com/JeffreyWay/laravel-mix). Same choice for Bootstrap, jQuery and Moment.  `npm install jquery daterangepicker moment bootstrap`.
 
 3. Composer will automatically link the package with Laravel. But you still can explicitely add provider and facade to your `config/app.php`:
 ```php
@@ -40,6 +40,24 @@ And range date picker appears as follow:
 ``` sh
 $ php artisan vendor:publish
 ```
+5. Add style to your app.scss file:
+
+```
+@import "~daterangepicker/daterangepicker.css";
+```
+
+6. add to app.js
+
+```
+global.jQuery = require('jquery');
+var $ = global.jQuery;
+var jQuery = global.JQuery;
+window.$ = $;
+window.jQuery = jQuery;
+require('bootstrap');
+global.moment = require('moment');
+require('daterangepicker');
+```
 
 # Usage
 
@@ -47,7 +65,7 @@ Declare Facade in Controller headers:
 
 ```
 use Carbon\Carbon;
-use Seb\DateRangePickerHelper\DateRangePickerHelper;
+use Seblhaire\DateRangePickerHelper\DateRangePickerHelper;
 ```
 
 In a Controller function initialize object and pass it to the view. You can init several DateRangePickers in a view, but
@@ -114,7 +132,7 @@ your app config directory if you publish config. Parameters not language-depende
 * `$options`: array of options among:
   * main used:
     * `singleDatePicker`: calendar selects one date instead of date range. Default: `false`.
-    * `showISOWeekNumbers` or `showWeekNumbers`: adds week numbers in calendar. If first option is set to `true`, weeks will be in ISO format. If second option is `true`, weeks will be shown in US format. If none of them is true, them week numbers will not be shown. Default settings depend on locale.
+    * `showISOWeekNumbers` or `showWeekNumbers`: adds week numbers in calendar. If first option is set to `true`, weeks will be in ISO format. If second option is `true`, weeks will be shown in US format. If none of them is true, then week numbers will not be shown. Default settings depend on locale.
     * `timePicker`: add dropdowns to select time in addition to dates. Default `false`.
     * `timePicker24Hour`: displays hours in format 24. Default `true`.
     * `timePickerSeconds`: add seconds to time. Default `false`.
