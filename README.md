@@ -134,9 +134,9 @@ your app config directory if you publish config. Parameters not language-depende
     * `singleDatePicker`: calendar selects one date instead of date range. Default: `false`.
     * `showISOWeekNumbers` or `showWeekNumbers`: adds week numbers in calendar. If first option is set to `true`, weeks will be in ISO format. If second option is `true`, weeks will be shown in US format. If none of them is true, then week numbers will not be shown. Default settings depend on locale.
     * `timePicker`: add dropdowns to select time in addition to dates. Default `false`.
-    * `timePicker24Hour`: displays hours in format 24. Default `true`.
-    * `timePickerSeconds`: add seconds to time. Default `false`.
-    * `timePickerIncrement`: minutes increment in dropdown. Default `1`.
+      * `timePicker24Hour`: displays hours in format 24. Default `true`.
+      * `timePickerSeconds`: add seconds to time. Default `false`.
+      * `timePickerIncrement`: minutes increment in dropdown. Default `1`.
     * `weeklabel`: Very short label for week number column. Abreviation is recommended. Default translation key `calendar::messages.weeklabel` `W`.
     * `firstday`: first day of week. 0 = sunday, 1 = monday, etc. Default depends on locale.
     * `usehiddeninputs`: sets whether we put selected date(s) (and time) in the following hidden input/s. Default: `true`.
