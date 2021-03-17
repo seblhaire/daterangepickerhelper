@@ -5,6 +5,7 @@
 `DateRangePickerHelper` is a Laravel library to provide an helper to initialize a single or double [DateRangePicker](https://www.daterangepicker.com/) calendar (based on
 [jQuery](https://jquery.com) Javascript framework). Dates use
 [Nesbot Carbon](https://carbon.nesbot.com/) on PHP side and [Moment.js](https://momentjs.com/) on Javascript side.
+Demo site available [here](https://sebastien.lhaire.org/paginator).
 
 Single date picker appears as follow:
 
