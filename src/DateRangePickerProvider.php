@@ -96,7 +96,7 @@ class DateRangePickerProvider{
 		        'timePicker' => 'is_bool',
 		        'timePicker24Hour' => 'is_bool',
 						'timePickerSeconds' => 'is_bool',
-		        `timePickerIncrement` => 'is_numeric',
+		        'timePickerIncrement' => 'is_numeric',
 		        'dateseparator' => 'is_string',
 		        'firstday' => 'is_numeric',
 		        'daysofweek' => 'is_array',
