@@ -86,7 +86,7 @@ return [
         'weeklabel' => '#daterangepickerhelper::messages.weeklabel#',
         'singleDatePicker' =>  false,
         'cal_in_form' => true,
-        "formdivclass" => 'form-group',
+        "formdivclass" => 'mb-3',
         'formlabel' => '',
         'formlabelclass' => 'control-label',
         'alwaysShowCalendars' => true,
