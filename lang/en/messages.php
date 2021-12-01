@@ -18,7 +18,7 @@ return [
   'month09' => 'September',
   'month10' => 'October',
   'month11' => 'November',
-  'month12' => 'Décember',
+  'month12' => 'December',
   'applylabel' => 'Select',
   'cancellabel' => 'Cancel',
   'fromlabel' => 'From',
