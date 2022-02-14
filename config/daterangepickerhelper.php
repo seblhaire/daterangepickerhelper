@@ -85,6 +85,10 @@ return [
         'customrange' =>  '#daterangepickerhelper::messages.customrange#',
         'weeklabel' => '#daterangepickerhelper::messages.weeklabel#',
         'singleDatePicker' =>  false,
+<<<<<<< HEAD
+=======
+        'cal_in_form' => true,
+>>>>>>> e181bbe30635a137b44250da000478fb839d9482
         "formdivclass" => 'mb-3',
         'formlabel' => '',
         'formlabelclass' => 'control-label',
