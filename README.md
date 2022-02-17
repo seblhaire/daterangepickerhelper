@@ -94,11 +94,7 @@ Then in the Blade view, print your calendar like this:
 If `$calendarElement` is set to `"mycal"`, the following line is printed, with options between rounded brackets:
 
 ```php
-<<<<<<< HEAD
 jQuery('#mycal').sebDateRangePicker({ ... });
-=======
-jQuery('#mycal').daterangepicker({ ... });
->>>>>>> e181bbe30635a137b44250da000478fb839d9482
 ```
 
 Alternatively, you can init it in controller without variable assignation and
@@ -108,11 +104,7 @@ Controller:
 ```
 $today = new Carbon;
 $calId = 'numCal';
-<<<<<<< HEAD
 DateRangePickerHelper::init($calId, $today, $today, null, null, ['singleDatePicker' => true,
-=======
-DateRangePickerHelper::init($calId, $today, $today, null, null, ['singleDatePicker' => true, 'cal_in_form' => true,
->>>>>>> e181bbe30635a137b44250da000478fb839d9482
                 'formlabel' => 'Date', 'usehiddeninputs' => false]);
 ```
 View:
@@ -222,11 +214,7 @@ Laravel loads config files very early in process. Therefore config files cannot 
 So far you have just initialized `DateRangePickerHelper`. But in your `JS` code, you need to retrieve new dates or date ranges set by your app user and/or to change dates dynamically, e.g. after you retrieve object from databases. `DateRangePicker` comes with methods to get and set new dates, but it is not easy to use, as shown here:
 
 ```php
-<<<<<<< HEAD
-jQuery('#mycal-caldiv').data('daterangepicker').startDate.format('YYYY-MM-DD');
-=======
-jQuery('#mycal').data('daterangepicker').startDate.format('YYYY-MM-DD');
->>>>>>> e181bbe30635a137b44250da000478fb839d9482
+jQuery('#mycal-caldiv').data('sebdaterangepicker').startDate.format('YYYY-MM-DD');
 ```
 You have to remember the id of `<div>` tag that the `DateRangePicker` is attached to and to format dates with `Moment` syntax. However in most cases, you use `DateRangePickerHelper` with standard date format which has been already set in default options. Therefore we have set getters and setters.
 
