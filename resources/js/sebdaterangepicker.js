@@ -24,10 +24,11 @@ var SebDateRangePicker = {
   },
   build: function(){
     if (this.customcallback != null){
-      this.calobj = this.caldiv.daterangepicker(this.options, this.customcallback);
+      this.caldiv.daterangepicker(this.options, this.customcallback);
     } else {
-      this.calobj = this.caldiv.daterangepicker(this.options, this.callback);
+      this.caldiv.daterangepicker(this.options, this.callback);
     }
+    this.calobj = this.caldiv.data('daterangepicker');
   },
   callback : function(start, end, label) {
     var self = this.element.parent('div').data('sebdaterangepicker');
