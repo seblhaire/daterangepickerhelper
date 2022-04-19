@@ -218,11 +218,14 @@ class DateRangePickerProvider{
               $this->end->format($carbonformat));
       $sStr .= "</span> <b class=\"fas fa-angle-down caret\"></b>";
 			if ($this->options['usehiddeninputs']){
-					$sStr .=  PHP_EOL .'<input type="hidden" id="' . $this->options['hiddeninputstart'] . '" name="' . $this->options['hiddeninputstart'] .
-						'" value="' . $this->start->format($carboninput) . '"/>';
 					if (!$this->options['singleDatePicker']){
-							$sStr .=  PHP_EOL . '<input type="hidden" id="' . $this->options['hiddeninputend'] . '" name="' . $this->options['hiddeninputend'] .
+						$sStr .=  PHP_EOL .'<input type="hidden" id="' . $this->options['hiddeninputstart'] . '" name="' . $this->options['hiddeninputstart'] .
+							'" value="' . $this->start->format($carboninput) . '"/>';
+						$sStr .=  PHP_EOL . '<input type="hidden" id="' . $this->options['hiddeninputend'] . '" name="' . $this->options['hiddeninputend'] .
 							'" value="' . $this->end->format($carboninput) . '"/>';
+					}else{
+						$sStr .=  PHP_EOL .'<input type="hidden" id="' . $this->options['hiddensingleinput'] . '" name="' . $this->options['hiddensingleinput'] .
+							'" value="' . $this->start->format($carboninput) . '"/>';
 					}
 			}
 			$sStr .= PHP_EOL . "</div>\n";

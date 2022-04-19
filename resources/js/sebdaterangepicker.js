@@ -43,6 +43,20 @@ var SebDateRangePicker = {
   setStartDate: function(momentdate){
 		 return this.calobj.setStartDate(momentdate);
 	},
+  setSingleCalendar: function(momentdate){
+    this.setStartDate(momentdate);
+    this.setEndDate(momentdate);
+    this.calspan.html(momentdate.format(this.options.locale.format));
+  },
+  setDoubleCalendar: function(momentstartdate, momentenddate){
+    this.setStartDate(momentstartdate);
+    this.setEndDate(momentenddate);
+		this.calspan.html(
+      momentstartdate.format(this.options.locale.format) +
+      this.options.locale.separator +
+      momentenddate.format(this.options.locale.format)
+    );
+  },
   startDate : function(){
     return this.calobj.startDate;
   },
