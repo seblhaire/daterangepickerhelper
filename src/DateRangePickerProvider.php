@@ -141,15 +141,11 @@ class DateRangePickerProvider{
 	}
 
 	public function setSingleCalendar($momentdate){
-		return $this->setStartDate($momentdate) . "\n" .
-				$this->setEndDate($momentdate) . "\n" .
-				$this->setCalLabelSingle($momentdate);
+		return "jQuery('#" . $this->calendarElement ."').data('sebdaterangepicker').setSingleCalendar(" . $momentdate . ");";
 	}
 
 	public function setDoubleCalendar($momentstartdate, $momentenddate){
-		return $this->setStartDate($momentstartdate) . "\n" .
-				$this->setEndDate($momentenddate) . "\n" .
-				$this->setCalLabelDouble($momentstartdate, $momentenddate);
+		return "jQuery('#" . $this->calendarElement ."').data('sebdaterangepicker').setDoubleCalendar(" . $momentstartdate . "," . $momentenddate . ");";
 	}
 
 	public function setStartDate($momentdate){
