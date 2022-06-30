@@ -351,5 +351,8 @@ class DateRangePickerProvider{
 			$sStr .= "</script>\n";
       return $sStr;
 	}
-
+	
+	public function __toString(){
+      return $this->output();
+  }
 }
