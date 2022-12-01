@@ -10,9 +10,13 @@ var SebDateRangePicker = {
   phpformat : null,
   customcallback : null,
   currentdate : null,
+  initialstart : null,
+  initialend : null,
   init: function(div, options, start, end, phpformat, customcallback){
     this.maindiv = jQuery(div);
     this.options = options;
+    this.initialstart = this.options.startDate;
+    this.initialend = this.options.endDate;
     this.caldiv = jQuery('#' + this.maindiv.prop('id') + '-caldiv');
     this.calspan = jQuery('#' + this.maindiv.prop('id') + '-span');
     if (start.length > 0) this.startdate = jQuery('#' + start);
@@ -74,6 +78,14 @@ var SebDateRangePicker = {
   },
   saveCurrentDate : function(){
     this.currentdate = this.calspan.html();
+  },
+  reset : function(){
+    if (this.options.singleDatePicker){
+      this.setSingleCalendar(this.initialstart);
+    }else{
+      this.setDoubleCalendar(this.initialstart, this.initialend);
+    }
+    this.saveCurrentDate();
   }
 };
 

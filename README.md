@@ -1,3 +1,4 @@
+
 # DateRangePickerHelper
 
 [By Sébastien L'haire](http://sebastien.lhaire.org)
@@ -89,7 +90,7 @@ return view('myview', [
 ```
 Then in the Blade view, print your calendar like this:
 
-`{!! $calendar->output() !!}`
+`{!! $calendar->output() !!}` or `{!! $calendar !!}`
 
 If `$calendarElement` is set to `"mycal"`, the following line is printed, with options between rounded brackets:
 
@@ -264,6 +265,8 @@ On the other side, your Ajax queries may load information in forms and other obj
 * `setEndDate($momentdate)` : sets end date for double calendar ; parameter is a `Moment` statement ;
 * `setCalLabelSingle($momentdate)` : outputs date for label for single calendar ; parameter is a `Moment` statement ;
 * `setCalLabelDouble($momentstartdate, $momentenddate)` : outputs date rang; parameters are `Moment` statements .
+
+Method `reset()` resets the calendar with the initial values.
 
 In the following example, in your blade template, if your `DateRangePickerHelper` is passed to variable `$calendar`, you may set dates this way:
 
