@@ -8,6 +8,8 @@ class DateRangePickerProvider{
 	  private $send = null;
 	  private $min = null;
 	  private $max = null;
+		private $inputDateId = null;
+		private $inputDateEndId = null;
 		private $options = array();
 
 
@@ -47,7 +49,12 @@ class DateRangePickerProvider{
 		    }else{
 		        throw new \Exception('wrong option');
 		    }
-				//var_dump($this->options); die();
+				if ($this->options['singleDatePicker']){
+					$this->inputDateId = $this->calendarElement . '-hidden-date';
+				} else {
+					$this->inputDateId = $this->calendarElement . '-hidden-startdate';
+					$this->inputDateEndId = $this->calendarElement . '-hidden-enddate';
+				}
 	}
 
 	private function translateOrPrint($key)
@@ -167,7 +174,7 @@ class DateRangePickerProvider{
 
 	public function getStartDate(){
 			if ($this->options['usehiddeninputs']){
-					return "jQuery('#" . $this->options['hiddeninputstart'] . "').val()";
+					return "jQuery('#" . $this->inputDateId  .  "').val()";
 			}else{
 					return "jQuery('#" . $this->calendarElement ."').data('sebdaterangepicker').startDate().format('" . $this->options["momentinputdate"] . "')";
 			}
@@ -175,7 +182,7 @@ class DateRangePickerProvider{
 
 	public function getEndDate(){
 		if ($this->options['usehiddeninputs']){
-				return "jQuery('#" . $this->options['hiddeninputend'] . "').val()";
+				return "jQuery('#" . $this->inputDateEndId . "').val()";
 		}else{
 				return "jQuery('#" . $this->calendarElement ."').data('sebdaterangepicker').endDate().format('" . $this->options["momentinputdate"] . "')";
 		}
@@ -205,6 +212,26 @@ class DateRangePickerProvider{
 			}else{
 					$weeknumbers = '';
 			}
+			if ($this->options['usehiddeninputs']){
+				if ($this->options['singleDatePicker']){
+					if ($this->options['hiddensingleinput'] != ''){
+						$inputDateName = $this->options['hiddensingleinput'];
+					} else {
+						$inputDateName = $this->calendarElement;
+					}
+				} else {
+					if ($this->options['hiddeninputstart'] != ''){
+						$inputDateName = $this->options['hiddeninputstart'];
+					} else {
+						$inputDateName = $this->calendarElement . '-start';
+					}
+					if ($this->options['hiddeninputend'] != ''){
+						$inputDateEndName = $this->options['hiddeninputend'];
+					} else {
+						$inputDateEndName = $this->calendarElement . '-end';
+					}
+				}
+			}
       $sStr = '<div id="' . $this->calendarElement .  '" class="' . $this->options['formdivclass'] . '">'  . PHP_EOL .
 			'<label class="' . $this->options['formlabelclass'] .
 			'" for="'. $this->calendarElement. '">' . $this->options['formlabel'] . '</label>' . PHP_EOL;
@@ -215,13 +242,10 @@ class DateRangePickerProvider{
       $sStr .= "</span> <b class=\"fas fa-angle-down caret\"></b>";
 			if ($this->options['usehiddeninputs']){
 					if (!$this->options['singleDatePicker']){
-						$sStr .=  PHP_EOL .'<input type="hidden" id="' . $this->options['hiddeninputstart'] . '" name="' . $this->options['hiddeninputstart'] .
-							'" value="' . $this->start->format($carboninput) . '"/>';
-						$sStr .=  PHP_EOL . '<input type="hidden" id="' . $this->options['hiddeninputend'] . '" name="' . $this->options['hiddeninputend'] .
-							'" value="' . $this->end->format($carboninput) . '"/>';
+						$sStr .=  PHP_EOL .'<input type="hidden" id="' . $this->inputDateId . '" name="' . $inputDateName . '" value="' . $this->start->format($carboninput) . '"/>';
+						$sStr .=  PHP_EOL . '<input type="hidden" id="' . $this->inputDateEndId . '" name="' . $inputDateEndName . '" value="' . $this->end->format($carboninput) . '"/>';
 					}else{
-						$sStr .=  PHP_EOL .'<input type="hidden" id="' . $this->options['hiddensingleinput'] . '" name="' . $this->options['hiddensingleinput'] .
-							'" value="' . $this->start->format($carboninput) . '"/>';
+						$sStr .=  PHP_EOL .'<input type="hidden" id="' . $this->inputDateId  . '" name="' . $inputDateName . '" value="' . $this->start->format($carboninput) . '"/>';
 					}
 			}
 			$sStr .= PHP_EOL . "</div>\n";
@@ -311,14 +335,14 @@ class DateRangePickerProvider{
 			$sStr .= "		},\n";
 			if ($this->options['singleDatePicker']){
 					if ($this->options['usehiddeninputs']){
-						$sStr .= '		"' . $this->options['hiddeninputstart'] . '",' . "\n";
+						$sStr .= '		"' . $this->inputDateId . '",' . "\n" .  '		"",' . "\n";
 					}else{
-						$sStr .= '		"",' . "\n";
+						$sStr .= '		"",' . "\n" .  '		"",' . "\n";
 					}
 			}else{
 				if ($this->options['usehiddeninputs']){
-					$sStr .= '		"' . $this->options['hiddeninputstart'] . '",' . "\n";
-					$sStr .= '		"' . $this->options['hiddeninputend'] . '",' . "\n";
+					$sStr .= '		"' . $this->inputDateId . '",' . "\n";
+					$sStr .= '		"' . $this->inputDateEndId  . '",' . "\n";
 				}else{
 					$sStr .= '		"",' . "\n" .  '		"",' . "\n";
 				}
@@ -351,7 +375,7 @@ class DateRangePickerProvider{
 			$sStr .= "</script>\n";
       return $sStr;
 	}
-	
+
 	public function __toString(){
       return $this->output();
   }

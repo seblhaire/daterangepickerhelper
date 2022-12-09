@@ -36,30 +36,29 @@ var SebDateRangePicker = {
   },
   callback : function(start, end, label) {
     var self = this.element.parent('div').data('sebdaterangepicker');
-		if (self.startdate != null) self.startdate.val(start.format(self.phpformat));
-		if (self.enddate != null) self.enddate.val(end.format(self.phpformat));
-    var span = start.format(self.options.locale.format);
-    if (!self.options.singleDatePicker){
-      span += self.options.locale.separator + end.format(self.options.locale.format);
-    }
-		self.calspan.html(span);
+		self.setResult(start, end);
 	},
+  setResult: function(start, end){
+    if (this.startdate != null) this.startdate.val(start.format(this.phpformat));
+		if (this.enddate != null) this.enddate.val(end.format(this.phpformat));
+    var span = start.format(this.options.locale.format);
+    if (!this.options.singleDatePicker){
+      span += this.options.locale.separator + end.format(this.options.locale.format);
+    }
+		this.calspan.html(span);
+  },
   setStartDate: function(momentdate){
 		 return this.calobj.setStartDate(momentdate);
 	},
   setSingleCalendar: function(momentdate){
     this.setStartDate(momentdate);
     this.setEndDate(momentdate);
-    this.calspan.html(momentdate.format(this.options.locale.format));
+    this.setResult(momentdate, null);
   },
   setDoubleCalendar: function(momentstartdate, momentenddate){
     this.setStartDate(momentstartdate);
     this.setEndDate(momentenddate);
-		this.calspan.html(
-      momentstartdate.format(this.options.locale.format) +
-      this.options.locale.separator +
-      momentenddate.format(this.options.locale.format)
-    );
+    this.setResult(momentstartdate, momentenddate);
   },
   startDate : function(){
     return this.calobj.startDate;

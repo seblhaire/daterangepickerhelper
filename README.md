@@ -141,9 +141,13 @@ your app config directory if you publish config. Parameters not language-depende
       * `timePickerIncrement`: minutes increment in dropdown. Default `1`.
     * `weeklabel`: Very short label for week number column. Abreviation is recommended. Default translation key `calendar::messages.weeklabel` `W`.
     * `firstday`: first day of week. 0 = sunday, 1 = monday, etc. Default depends on locale.
-    * `usehiddeninputs`: sets whether we put selected date(s) (and time) in the following hidden input/s. Default: `true`.
-      * `hiddeninputstart`: name of input for start date. Default: `'startdate'`.
-      * `hiddeninputend`: name of input for end date (if double date calendar). Default: `'enddate'`.
+    * `usehiddeninputs`: sets whether we put selected date(s) (and time) in hidden input/s. Default: `true`.
+      * single calendar: default input name is the same value as `$calendarElement`. If you want another input name, set `hiddensingleinput` value. Input id is the value of `$calendarElement` followed by `'-hidden-date'`.
+      * double calendar:
+          * start date: default input name is value of `$calendarElement` followed by `'-start'`. If you want to change this value, set `hiddeninputstart` value. Input id is
+          value of `$calendarElement` followed by `'-hidden-startdate'`.
+          * end date: default input name is value of `$calendarElement` followed by `'-end'`. If you want to change this value, set `hiddeninputend` value. Input id is
+          value of `$calendarElement` followed by `'-hidden-enddate'`.
   * date format: Carbon formats are used to initialize calendars. Moment.js formats are used on new date selection. We need both formats. In order to facilitate configuration, we define several versions depending on preceding parameters, in order to format a correct date, with or without time, with or without seconds:
     * **momentinput**: Momentjs format to fill hidden inputs (see `usehiddeninputs`). Choices are `'momentinputdate'` or `'momentinputdatetime'`.
     * **carboninput**: Carbon format to fill hidden inputs (see `usehiddeninputs`). Choices are `'carboninputdate'`  or `'carboninputdatetime'`.
