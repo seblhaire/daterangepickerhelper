@@ -1,27 +1,28 @@
-<?php namespace Seblhaire\DateRangePickerHelper;
+<?php
 
-interface DateRangePickerHelperServiceContract{
+namespace Seblhaire\DateRangePickerHelper;
 
-	public function init($calendarElement, $start, $end, $min, $max, $options = []);
+interface DateRangePickerHelperServiceContract {
 
-public function getCalendar($calendarElement ='');
+    public function init($calendarElement, $start, $end, $min, $max, $options = []);
 
-public function setSingleCalendar($momentdate, $calendarElement ='');
+    public function getCalendar($calendarElement = '');
 
-public function setDoubleCalendar($momentstartdate, $momentenddate, $calendarElement ='');
+    public function setSingleCalendar($momentdate, $calendarElement = '');
 
-public function setStartDate($momentdate, $calendarElement ='');
+    public function setDoubleCalendar($momentstartdate, $momentenddate, $calendarElement = '');
 
-public function setEndDate($momentdate, $calendarElement ='');
+    public function setStartDate($momentdate, $calendarElement = '');
 
-public function setCalLabelSingle($momentdate, $calendarElement ='');
+    public function setEndDate($momentdate, $calendarElement = '');
 
-public function setCalLabelDouble($momentstartdate, $momentenddate, $calendarElement ='');
+    public function setCalLabelSingle($momentdate, $calendarElement = '');
 
-public function getStartDate($calendarElement ='');
+    public function setCalLabelDouble($momentstartdate, $momentenddate, $calendarElement = '');
 
-public function getEndDate($calendarElement ='');
+    public function getStartDate($calendarElement = '');
 
-public function output($calendarElement ='');
+    public function getEndDate($calendarElement = '');
 
+    public function output($calendarElement = '');
 }
