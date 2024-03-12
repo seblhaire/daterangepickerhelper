@@ -18,16 +18,16 @@ class DateRangePickerProvider {
 
     public function __construct($calendarElement, $start, $end, $min, $max, $options = []) {
         $this->calendarElement = $calendarElement;
-        if (!is_a($start, 'Carbon\Carbon')) {
+        if (!is_a($start, Carbon::class)) {
             throw new \Exception('wrong date object');
         }
-        if (!is_a($end, 'Carbon\Carbon')) {
+        if (!is_a($end, Carbon::class)) {
             throw new \Exception('wrong date object');
         }
-        if (!is_null($min) && !is_a($min, 'Carbon\Carbon')) {
+        if (!is_null($min) && !is_a($min, Carbon::class)) {
             throw new \Exception('wrong date object');
         }
-        if (!is_null($max) && !is_a($max, 'Carbon\Carbon')) {
+        if (!is_null($max) && !is_a($max, Carbon::class)) {
             throw new \Exception('wrong date object');
         }
         $this->start = $start;
