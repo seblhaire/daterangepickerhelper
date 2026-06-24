@@ -15,6 +15,13 @@ class DateRangePickerProvider {
     private $inputDateId = null;
     private $inputDateEndId = null;
     private $options = array();
+    private $weeknumbers = null;
+    private $carboninput = null;
+    private $momentinput = null;
+    private $formatdisplay = null;
+    private $carbonformat = null;
+    private $inputDateName = null;
+    private $inputDateEndName = null;
 
     public function __construct($calendarElement, $start, $end, $min, $max, $options = []) {
         $this->calendarElement = $calendarElement;
@@ -57,6 +64,238 @@ class DateRangePickerProvider {
         } else {
             $this->inputDateId = $this->calendarElement . '-hidden-startdate';
             $this->inputDateEndId = $this->calendarElement . '-hidden-enddate';
+        }
+        if ($this->options['showISOWeekNumbers']) {
+            $this->weeknumbers = 'iso';
+        } elseif ($this->options['showWeekNumbers']) {
+            $this->weeknumbers = 'us';
+        } else {
+            $this->weeknumbers = '';
+        }
+        if ($this->options['timePicker']) {
+            $this->carboninput = $this->options["carboninputdatetime"];
+            $this->momentinput = $this->options["momentinputdatetime"];
+            if ($this->options["timePickerSeconds"]) {
+                $this->formatdisplay = $this->options["formatdisplaytimeseconds"];
+                $this->carbonformat = $this->options["carbonformattimeseconds"];
+            } else {
+                $this->formatdisplay = $this->options["formatdisplaytime"];
+                $this->carbonformat = $this->options["carbonformattime"];
+            }
+        } else {
+            $this->carboninput = $this->options["carboninputdate"];
+            $this->momentinput = $this->options["momentinputdate"];
+            $this->formatdisplay = $this->options["formatdisplay"];
+            $this->carbonformat = $this->options["carbonformat"];
+        }
+        if ($this->options['usehiddeninputs']) {
+            if ($this->options['singleDatePicker']) {
+                if ($this->options['hiddensingleinput'] != '') {
+                    $this->inputDateName = $this->options['hiddensingleinput'];
+                } else {
+                    $this->inputDateName = $this->calendarElement;
+                }
+            } else {
+                if ($this->options['hiddeninputstart'] != '') {
+                    $this->inputDateName = $this->options['hiddeninputstart'];
+                } else {
+                    $this->inputDateName = $this->calendarElement . '-start';
+                }
+                if ($this->options['hiddeninputend'] != '') {
+                    $this->inputDateEndName = $this->options['hiddeninputend'];
+                } else {
+                    $this->inputDateEndName = $this->calendarElement . '-end';
+                }
+            }
+        }
+    }
+
+    public function printTags() : string {
+        $sStr = '<div id="' . $this->calendarElement . '" class="' . $this->options['formdivclass'] . '">' . PHP_EOL .
+                '<label class="' . $this->options['formlabelclass'] .
+                '" for="' . $this->calendarElement . '">' . $this->options['formlabel'] . '</label>' . PHP_EOL;
+        $sStr .= "<div id=\"" . $this->calendarElement . "-caldiv\" class=\"" . $this->options["caldivclass"] . "\">\n";
+        $sStr .= $this->options['icon'] . '&nbsp;';
+        $sStr .= "<span id=\"" . $this->calendarElement . "-span\">" . $this->start->format($this->carbonformat) . ($this->options['singleDatePicker'] ? '' : $this->options['dateseparator'] .
+                $this->end->format($this->carbonformat));
+        $sStr .= "</span> <b class=\"fas fa-angle-down caret\"></b>";
+        if ($this->options['usehiddeninputs']) {
+            if (!$this->options['singleDatePicker']) {
+                $sStr .= PHP_EOL . '<input type="hidden" id="' . $this->inputDateId . '" name="' . $this->inputDateName . '" value="' . $this->start->format($this->carboninput) . '"/>';
+                $sStr .= PHP_EOL . '<input type="hidden" id="' . $this->inputDateEndId . '" name="' . $this->inputDateEndName . '" value="' . $this->end->format($this->carboninput) . '"/>';
+            } else {
+                $sStr .= PHP_EOL . '<input type="hidden" id="' . $this->inputDateId . '" name="' . $this->inputDateName . '" value="' . $this->start->format($this->carboninput) . '"/>';
+            }
+        }
+        $sStr .= PHP_EOL . "</div>\n";
+        $sStr .= "</div>\n";
+        return $sStr;
+    }
+
+    public function printInitJs() : string {
+        $sStr = "$('#" . $this->calendarElement . "').sebDateRangePicker({";
+        $sStr .= "opens: '" . $this->options['opens'] . "', ";
+        $sStr .= "drops: '" . $this->options['drops'] . "', ";
+        if ($this->weeknumbers == 'iso') {
+            $sStr .= "showISOWeekNumbers: true, ";
+        } else if ($this->weeknumbers == 'us') {
+            $sStr .= "showWeekNumbers: true, ";
+        }
+        $sStr .= "alwaysShowCalendars: " . (($this->options['alwaysShowCalendars']) ? 'true' : 'false') . ", ";
+        if (strlen($this->options['maxSpan']) > 0) {
+            $sStr .= "alwaysShowCalendars: {" . $this->options['maxSpan'] . "}, ";
+        }
+        if ($this->options['showDropdowns']) {
+            $sStr .= "showDropdowns: true, ";
+        }
+        if ($this->options['minYear'] > 0) {
+            $sStr .= "minYear: " . $this->options['minYear'] . ", ";
+        }
+        if ($this->options['maxYear'] > 0) {
+            $sStr .= "maxYear: " . $this->options['maxYear'] . ", ";
+        }
+        if ($this->options['timePicker']) {
+            $sStr .= "timePicker: true, ";
+            if ($this->options['timePicker24Hour']) {
+                $sStr .= "timePicker24Hour: true, ";
+            }
+            if ($this->options['timePickerIncrement'] > 1) {
+                $sStr .= "timePickerIncrement: " . $this->options['timePickerIncrement'] . ", ";
+            }
+            if ($this->options['timePickerSeconds']) {
+                $sStr .= "timePickerSeconds: true, ";
+            }
+        }
+        if (strlen($this->options['buttonClasses']) > 0) {
+            $sStr .= "buttonClasses: '" . $this->options['buttonClasses'] . "', ";
+        }
+        if (strlen($this->options['applyButtonClasses']) > 0) {
+            $sStr .= "applyButtonClasses: '" . $this->options['applyButtonClasses'] . "', ";
+        }
+        if (strlen($this->options['cancelButtonClasses']) > 0) {
+            $sStr .= "cancelButtonClasses: '" . $this->options['cancelButtonClasses'] . "', ";
+        }
+        if ($this->options['autoApply']) {
+            $sStr .= "autoApply: true, ";
+        }
+        if ($this->options['linkedCalendars']) {
+            $sStr .= "linkedCalendars: true, ";
+        }
+        if ($this->options['singleDatePicker']) {
+            $sStr .= "singleDatePicker: true, ";
+        } else {
+            $ranges = '';
+            foreach ($this->options['ranges'] as $label => $functions) {
+                $ranges .= (strlen($ranges) > 0 ? ", " : "") . "               '" . $this->translateOrPrint($label) . "' : [" . $functions[0] . ", " . $functions[1] . "]";
+            }
+            $sStr .= "ranges: {" . $ranges . "}, ";
+            if (!$this->options['showCustomRangeLabel']) {
+                $sStr .= "\"showCustomRangeLabel\": false, ";
+            }
+        }
+        $sStr .= "locale: {";
+        $sStr .= "format: \"" . $this->formatdisplay . "\", ";
+        $sStr .= "separator: \"" . $this->options['dateseparator'] . "\", ";
+        $sStr .= "applyLabel: \"" . $this->translateOrPrint($this->options['applylabel']) . "\", ";
+        $sStr .= "cancelLabel: \"" . $this->translateOrPrint($this->options['cancellabel']) . "\", ";
+        $sStr .= "fromLabel: \"" . $this->translateOrPrint($this->options['fromlabel']) . "\", ";
+        $sStr .= "toLabel: \"" . $this->translateOrPrint($this->options['tolabel']) . "\", ";
+        $sStr .= "customRangeLabel: \"" . $this->translateOrPrint($this->options['customrange']) . "\", ";
+        $sStr .= "weekLabel: \"" . $this->translateOrPrint($this->options['weeklabel']) . "\", ";
+        $sStr .= "daysOfWeek: " . $this->outputarray($this->options['daysofweek']) . ", ";
+        $sStr .= "monthNames: " . $this->outputarray($this->options['monthnames']) . ", ";
+        $sStr .= "firstDay: " . $this->options['firstday'] . "}, ";
+        $sStr .= "startDate: moment(\"" . $this->start->format($this->carboninput) . "\"), ";
+        $sStr .= "endDate: moment(\"" . $this->end->format($this->carboninput) . "\")";
+        if (!is_null($this->min)) {
+            $sStr .= ", minDate: moment(\"" . $this->min->format($this->carboninput) . "\")";
+        }
+        if (!is_null($this->max)) {
+            $sStr .= ", maxDate: moment(\"" . $this->max->format($this->carboninput) . "\")";
+        }
+        $sStr .= "}, ";
+        if ($this->options['singleDatePicker']) {
+            if ($this->options['usehiddeninputs']) {
+                $sStr .= '"' . $this->inputDateId . '", ';
+            }
+        } else {
+            if ($this->options['usehiddeninputs']) {
+                $sStr .= '"' . $this->inputDateId . '", ';
+                $sStr .= '"' . $this->inputDateEndId . '", ';
+            }
+        }
+        $sStr .= '"' . $this->momentinput . '", ';
+        if (strlen($this->options['submitfunction']) > 0) {
+            $sStr .= "function(start, end, label) {" . $this->options['submitfunction'] . "}";
+        } else {
+            $sStr .= "null";
+        }
+        $sStr .= ");\n";
+        $sStr .= $this->printAdditionalJs() . "\n";
+        return $sStr;
+    }
+
+    private function printAdditionalJs(): string {
+        $sStr = '';
+        if (strlen($this->options['show.daterangepicker']) > 0) {
+            $sStr .= '$("#' . $this->calendarElement . '").on("show.daterangepicker", function(ev, picker) { ' . $this->options['show.daterangepicker'] . ' });';
+        }
+        if (strlen($this->options['hide.daterangepicker']) > 0) {
+            $sStr .= '$("#' . $this->calendarElement . '").on("hide.daterangepicker", function(ev, picker) { ' . $this->options['hide.daterangepicker'] . ' });';
+        }
+        if (strlen($this->options['showCalendar.daterangepicker']) > 0) {
+            $sStr .= '$("#' . $this->calendarElement . '").on("showCalendar.daterangepicker", function(ev, picker) { ' . $this->options['showCalendar.daterangepicker'] . ' });';
+        }
+        if (strlen($this->options['hideCalendar.daterangepicker']) > 0) {
+            $sStr .= '$("#' . $this->calendarElement . '").on("hideCalendar.daterangepicker", function(ev, picker) { ' . $this->options['hideCalendar.daterangepicker'] . ' });';
+        }
+        if (strlen($this->options['apply.daterangepicker']) > 0) {
+            $sStr .= '$("#' . $this->calendarElement . '").on("apply.daterangepicker", function(ev, picker) { ' . $this->options['apply.daterangepicker'] . ' });';
+        }
+        if (strlen($this->options['cancel.daterangepicker']) > 0) {
+            $sStr .= '$("#' . $this->calendarElement . '").on("cancel.daterangepicker", function(ev, picker) { ' . $this->options['cancel.daterangepicker'] . ' });';
+        }
+        return $sStr;
+    }
+
+    public function setSingleCalendar($momentdate) {
+        return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').setSingleCalendar(" . $momentdate . ");";
+    }
+
+    public function setDoubleCalendar($momentstartdate, $momentenddate) {
+        return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').setDoubleCalendar(" . $momentstartdate . "," . $momentenddate . ");";
+    }
+
+    public function setStartDate($momentdate) {
+        return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').setStartDate(" . $momentdate . ");";
+    }
+
+    public function setEndDate($momentdate) {
+        return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').setEndDate(" . $momentdate . ");";
+    }
+
+    public function setCalLabelSingle($momentdate) {
+        return "$('#" . $this->calendarElement . " span').html(" . $momentdate . ".format('" . $this->options["formatdisplay"] . "'));";
+    }
+
+    public function setCalLabelDouble($momentstartdate, $momentenddate) {
+        return "$('#" . $this->calendarElement . " span').html(" . $momentstartdate . ".format('" . $this->options["formatdisplay"] .
+                "') + '" . $this->options['dateseparator'] . "' + " . $momentstartdate . ".format('" . $this->options["formatdisplay"] . "'));";
+    }
+
+    public function getStartDate() {
+        if ($this->options['usehiddeninputs']) {
+            return "$('#" . $this->inputDateId . "').val()";
+        } else {
+            return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').startDate().format('" . $this->options["momentinputdate"] . "')";
+        }
+    }
+
+    public function getEndDate() {
+        if ($this->options['usehiddeninputs']) {
+            return "$('#" . $this->inputDateEndId . "').val()";
+        } else {
+            return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').endDate().format('" . $this->options["momentinputdate"] . "')";
         }
     }
 
@@ -147,238 +386,5 @@ class DateRangePickerProvider {
             return true;
         }
         return false;
-    }
-
-    public function setSingleCalendar($momentdate) {
-        return "jQuery('#" . $this->calendarElement . "').data('sebdaterangepicker').setSingleCalendar(" . $momentdate . ");";
-    }
-
-    public function setDoubleCalendar($momentstartdate, $momentenddate) {
-        return "jQuery('#" . $this->calendarElement . "').data('sebdaterangepicker').setDoubleCalendar(" . $momentstartdate . "," . $momentenddate . ");";
-    }
-
-    public function setStartDate($momentdate) {
-        return "jQuery('#" . $this->calendarElement . "').data('sebdaterangepicker').setStartDate(" . $momentdate . ");";
-    }
-
-    public function setEndDate($momentdate) {
-        return "jQuery('#" . $this->calendarElement . "').data('sebdaterangepicker').setEndDate(" . $momentdate . ");";
-    }
-
-    public function setCalLabelSingle($momentdate) {
-        return "jQuery('#" . $this->calendarElement . " span').html(" . $momentdate . ".format('" . $this->options["formatdisplay"] . "'));";
-    }
-
-    public function setCalLabelDouble($momentstartdate, $momentenddate) {
-        return "jQuery('#" . $this->calendarElement . " span').html(" . $momentstartdate . ".format('" . $this->options["formatdisplay"] .
-                "') + '" . $this->options['dateseparator'] . "' + " . $momentstartdate . ".format('" . $this->options["formatdisplay"] . "'));";
-    }
-
-    public function getStartDate() {
-        if ($this->options['usehiddeninputs']) {
-            return "jQuery('#" . $this->inputDateId . "').val()";
-        } else {
-            return "jQuery('#" . $this->calendarElement . "').data('sebdaterangepicker').startDate().format('" . $this->options["momentinputdate"] . "')";
-        }
-    }
-
-    public function getEndDate() {
-        if ($this->options['usehiddeninputs']) {
-            return "jQuery('#" . $this->inputDateEndId . "').val()";
-        } else {
-            return "jQuery('#" . $this->calendarElement . "').data('sebdaterangepicker').endDate().format('" . $this->options["momentinputdate"] . "')";
-        }
-    }
-
-    public function output() {
-        if ($this->options['timePicker']) {
-            $carboninput = $this->options["carboninputdatetime"];
-            $momentinput = $this->options["momentinputdatetime"];
-            if ($this->options["timePickerSeconds"]) {
-                $formatdisplay = $this->options["formatdisplaytimeseconds"];
-                $carbonformat = $this->options["carbonformattimeseconds"];
-            } else {
-                $formatdisplay = $this->options["formatdisplaytime"];
-                $carbonformat = $this->options["carbonformattime"];
-            }
-        } else {
-            $carboninput = $this->options["carboninputdate"];
-            $momentinput = $this->options["momentinputdate"];
-            $formatdisplay = $this->options["formatdisplay"];
-            $carbonformat = $this->options["carbonformat"];
-        }
-        if ($this->options['showISOWeekNumbers']) {
-            $weeknumbers = 'iso';
-        } elseif ($this->options['showWeekNumbers']) {
-            $weeknumbers = 'us';
-        } else {
-            $weeknumbers = '';
-        }
-        if ($this->options['usehiddeninputs']) {
-            if ($this->options['singleDatePicker']) {
-                if ($this->options['hiddensingleinput'] != '') {
-                    $inputDateName = $this->options['hiddensingleinput'];
-                } else {
-                    $inputDateName = $this->calendarElement;
-                }
-            } else {
-                if ($this->options['hiddeninputstart'] != '') {
-                    $inputDateName = $this->options['hiddeninputstart'];
-                } else {
-                    $inputDateName = $this->calendarElement . '-start';
-                }
-                if ($this->options['hiddeninputend'] != '') {
-                    $inputDateEndName = $this->options['hiddeninputend'];
-                } else {
-                    $inputDateEndName = $this->calendarElement . '-end';
-                }
-            }
-        }
-        $sStr = '<div id="' . $this->calendarElement . '" class="' . $this->options['formdivclass'] . '">' . PHP_EOL .
-                '<label class="' . $this->options['formlabelclass'] .
-                '" for="' . $this->calendarElement . '">' . $this->options['formlabel'] . '</label>' . PHP_EOL;
-        $sStr .= "<div id=\"" . $this->calendarElement . "-caldiv\" class=\"" . $this->options["caldivclass"] . "\">\n";
-        $sStr .= $this->options['icon'] . '&nbsp;';
-        $sStr .= "<span id=\"" . $this->calendarElement . "-span\">" . $this->start->format($carbonformat) . ($this->options['singleDatePicker'] ? '' : $this->options['dateseparator'] .
-                $this->end->format($carbonformat));
-        $sStr .= "</span> <b class=\"fas fa-angle-down caret\"></b>";
-        if ($this->options['usehiddeninputs']) {
-            if (!$this->options['singleDatePicker']) {
-                $sStr .= PHP_EOL . '<input type="hidden" id="' . $this->inputDateId . '" name="' . $inputDateName . '" value="' . $this->start->format($carboninput) . '"/>';
-                $sStr .= PHP_EOL . '<input type="hidden" id="' . $this->inputDateEndId . '" name="' . $inputDateEndName . '" value="' . $this->end->format($carboninput) . '"/>';
-            } else {
-                $sStr .= PHP_EOL . '<input type="hidden" id="' . $this->inputDateId . '" name="' . $inputDateName . '" value="' . $this->start->format($carboninput) . '"/>';
-            }
-        }
-        $sStr .= PHP_EOL . "</div>\n";
-        $sStr .= "</div>\n";
-        $sStr .= "<script type=\"text/javascript\">\njQuery(function() {\n";
-        $sStr .= "	jQuery('#" . $this->calendarElement . "').sebDateRangePicker({\n";
-        $sStr .= "			\"opens\": '" . $this->options['opens'] . "',\n";
-        $sStr .= "			\"drops\": '" . $this->options['drops'] . "',\n";
-
-        if ($weeknumbers == 'iso') {
-            $sStr .= "			\"showISOWeekNumbers\": true,\n";
-        } else if ($weeknumbers == 'us') {
-            $sStr .= "			\"showWeekNumbers\": true,\n";
-        }
-        $sStr .= "			\"alwaysShowCalendars\": " . (($this->options['alwaysShowCalendars']) ? 'true' : 'false') . ",\n";
-        if (strlen($this->options['maxSpan']) > 0) {
-            $sStr .= "			\"alwaysShowCalendars\": {" . $this->options['maxSpan'] . "},\n";
-        }
-        if ($this->options['showDropdowns']) {
-            $sStr .= "				\"showDropdowns\": true,\n";
-        }
-        if ($this->options['minYear'] > 0) {
-            $sStr .= "			\"minYear\": " . $this->options['minYear'] . ",\n";
-        }
-        if ($this->options['maxYear'] > 0) {
-            $sStr .= "			\"maxYear\": " . $this->options['maxYear'] . ",\n";
-        }
-        if ($this->options['timePicker']) {
-            $sStr .= "			\"timePicker\": true,\n";
-            if ($this->options['timePicker24Hour']) {
-                $sStr .= "			\"timePicker24Hour\": true,\n";
-            }
-            if ($this->options['timePickerIncrement'] > 1) {
-                $sStr .= "			\"timePickerIncrement\": " . $this->options['timePickerIncrement'] . ",\n";
-            }
-            if ($this->options['timePickerSeconds']) {
-                $sStr .= "			\"timePickerSeconds\": true,\n";
-            }
-        }
-        if (strlen($this->options['buttonClasses']) > 0) {
-            $sStr .= "			\"buttonClasses\": '" . $this->options['buttonClasses'] . "',\n";
-        }
-        if (strlen($this->options['applyButtonClasses']) > 0) {
-            $sStr .= "			\"applyButtonClasses\": '" . $this->options['applyButtonClasses'] . "',\n";
-        }
-        if (strlen($this->options['cancelButtonClasses']) > 0) {
-            $sStr .= "			\"cancelButtonClasses\": '" . $this->options['cancelButtonClasses'] . "',\n";
-        }
-        if ($this->options['autoApply']) {
-            $sStr .= "			\"autoApply\": true,\n";
-        }
-        if ($this->options['linkedCalendars']) {
-            $sStr .= "			\"linkedCalendars\": true,\n";
-        }
-        if ($this->options['singleDatePicker']) {
-            $sStr .= "			\"singleDatePicker\" : true,\n";
-        } else {
-            $ranges = '';
-            foreach ($this->options['ranges'] as $label => $functions) {
-                $ranges .= (strlen($ranges) > 0 ? ",\n" : "") . "				'" . $this->translateOrPrint($label) . "' : [" . $functions[0] . ", " . $functions[1] . "]";
-            }
-            $sStr .= "			\"ranges\": {\n" . $ranges . "\n			},\n";
-            if (!$this->options['showCustomRangeLabel']) {
-                $sStr .= "			\"showCustomRangeLabel\": false,\n";
-            }
-        }
-        $sStr .= "			\"locale\": {\n";
-        $sStr .= "				\"format\": \"" . $formatdisplay . "\",\n";
-        $sStr .= "				\"separator\": \"" . $this->options['dateseparator'] . "\",\n";
-        $sStr .= "				\"applyLabel\": \"" . $this->translateOrPrint($this->options['applylabel']) . "\",\n";
-        $sStr .= "				\"cancelLabel\": \"" . $this->translateOrPrint($this->options['cancellabel']) . "\",\n";
-        $sStr .= "				\"fromLabel\": \"" . $this->translateOrPrint($this->options['fromlabel']) . "\",\n";
-        $sStr .= "				\"toLabel\": \"" . $this->translateOrPrint($this->options['tolabel']) . "\",\n";
-        $sStr .= "				\"customRangeLabel\": \"" . $this->translateOrPrint($this->options['customrange']) . "\",\n";
-        $sStr .= "				\"weekLabel\": \"" . $this->translateOrPrint($this->options['weeklabel']) . "\",\n";
-        $sStr .= "				\"daysOfWeek\": " . $this->outputarray($this->options['daysofweek']) . ",\n";
-        $sStr .= "				\"monthNames\": " . $this->outputarray($this->options['monthnames']) . ",\n";
-        $sStr .= "				\"firstDay\" : " . $this->options['firstday'] . "\n			},\n";
-        $sStr .= "			\"startDate\": moment(\"" . $this->start->format($carboninput) . "\"),\n";
-        $sStr .= "			\"endDate\": moment(\"" . $this->end->format($carboninput) . "\")\n";
-        if (!is_null($this->min)) {
-            $sStr .= "			,\"minDate\": moment(\"" . $this->min->format($carboninput) . "\")\n";
-        }
-        if (!is_null($this->max)) {
-            $sStr .= "			,\"maxDate\": moment(\"" . $this->max->format($carboninput) . "\")\n";
-        }
-        $sStr .= "		},\n";
-        if ($this->options['singleDatePicker']) {
-            if ($this->options['usehiddeninputs']) {
-                $sStr .= '		"' . $this->inputDateId . '",' . "\n" . '		"",' . "\n";
-            } else {
-                $sStr .= '		"",' . "\n" . '		"",' . "\n";
-            }
-        } else {
-            if ($this->options['usehiddeninputs']) {
-                $sStr .= '		"' . $this->inputDateId . '",' . "\n";
-                $sStr .= '		"' . $this->inputDateEndId . '",' . "\n";
-            } else {
-                $sStr .= '		"",' . "\n" . '		"",' . "\n";
-            }
-        }
-        $sStr .= '		"' . $momentinput . '",' . "\n";
-        if (strlen($this->options['submitfunction']) > 0) {
-            $sStr .= "		function(start, end, label) {\n		" . $this->options['submitfunction'] . "\n	}";
-        } else {
-            $sStr .= "		null";
-        }
-        $sStr .= "\n	);\n});\n";
-        if (strlen($this->options['show.daterangepicker']) > 0) {
-            $sStr .= 'jQuery("#' . $this->calendarElement . '").on("show.daterangepicker", function(ev, picker) { ' . $this->options['show.daterangepicker'] . ' });';
-        }
-        if (strlen($this->options['hide.daterangepicker']) > 0) {
-            $sStr .= 'jQuery("#' . $this->calendarElement . '").on("hide.daterangepicker", function(ev, picker) { ' . $this->options['hide.daterangepicker'] . ' });';
-        }
-        if (strlen($this->options['showCalendar.daterangepicker']) > 0) {
-            $sStr .= 'jQuery("#' . $this->calendarElement . '").on("showCalendar.daterangepicker", function(ev, picker) { ' . $this->options['showCalendar.daterangepicker'] . ' });';
-        }
-        if (strlen($this->options['hideCalendar.daterangepicker']) > 0) {
-            $sStr .= 'jQuery("#' . $this->calendarElement . '").on("hideCalendar.daterangepicker", function(ev, picker) { ' . $this->options['hideCalendar.daterangepicker'] . ' });';
-        }
-        if (strlen($this->options['apply.daterangepicker']) > 0) {
-            $sStr .= 'jQuery("#' . $this->calendarElement . '").on("apply.daterangepicker", function(ev, picker) { ' . $this->options['apply.daterangepicker'] . ' });';
-        }
-        if (strlen($this->options['cancel.daterangepicker']) > 0) {
-            $sStr .= 'jQuery("#' . $this->calendarElement . '").on("cancel.daterangepicker", function(ev, picker) { ' . $this->options['cancel.daterangepicker'] . ' });';
-        }
-        $sStr .= "</script>\n";
-        return $sStr;
-    }
-
-    public function __toString() {
-        return $this->output();
     }
 }
