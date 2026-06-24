@@ -1,3 +1,5 @@
+import $ from 'jquery';
+import * as dayjs from 'dayjs';
 var SebDateRangePicker = {
     maindiv: null,
     caldiv: null,
@@ -13,16 +15,16 @@ var SebDateRangePicker = {
     initialstart: null,
     initialend: null,
     init: function (div, options, start, end, phpformat, customcallback) {
-        this.maindiv = jQuery(div);
+        this.maindiv = $(div);
         this.options = options;
         this.initialstart = this.options.startDate;
         this.initialend = this.options.endDate;
-        this.caldiv = jQuery('#' + this.maindiv.prop('id') + '-caldiv');
-        this.calspan = jQuery('#' + this.maindiv.prop('id') + '-span');
+        this.caldiv = $('#' + this.maindiv.prop('id') + '-caldiv');
+        this.calspan = $('#' + this.maindiv.prop('id') + '-span');
         if (start.length > 0)
-            this.startdate = jQuery('#' + start);
+            this.startdate = $('#' + start);
         if (end.length > 0)
-            this.enddate = jQuery('#' + end);
+            this.enddate = $('#' + end);
         this.phpformat = phpformat;
         this.customcallback = customcallback;
         this.build();
@@ -99,12 +101,12 @@ if (typeof Object.create !== 'function') {
         return new F();
     };
 }
-// table builder function
-(function (jQuery) {
+
+(function ($) {
     /* Create plugin */
-    jQuery.fn.sebDateRangePicker = function (options, start, end, phpformat, customcallback) {
+    $.fn.sebDateRangePicker = function (options, start, end, phpformat, customcallback) {
         return this.each(function () {
-            var element = jQuery(this);
+            var element = $(this);
             if (element.prop('tagName') != 'DIV')
                 throw 'not a DIV';
             // Return early if this element already has a plugin instance
@@ -116,4 +118,4 @@ if (typeof Object.create !== 'function') {
             element.data('sebdaterangepicker', sebdaterangepicker);
         });
     };
-})(jQuery);
+})($);
