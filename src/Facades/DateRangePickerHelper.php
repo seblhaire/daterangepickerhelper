@@ -1,6 +1,6 @@
 <?php
 
-namespace Seblhaire\DateRangePickerHelper;
+namespace Seblhaire\DateRangePickerHelper\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

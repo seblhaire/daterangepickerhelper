@@ -1,9 +1,10 @@
 <?php
 
-namespace Seblhaire\DateRangePickerHelper;
+namespace Seblhaire\DateRangePickerHelper\Classes;
 
 use Carbon\Carbon;
 use App;
+use function Stringy\create as stringy;
 
 class DateRangePickerProvider {
 
@@ -17,7 +18,7 @@ class DateRangePickerProvider {
     private $options = array();
     private $weeknumbers = null;
     private $carboninput = null;
-    private $momentinput = null;
+    private $luxoninput = null;
     private $formatdisplay = null;
     private $carbonformat = null;
     private $inputDateName = null;
@@ -56,6 +57,34 @@ class DateRangePickerProvider {
                     array_merge(config('daterangepickerhelper.default'), $config),
                     $options
             );
+            if (!isset($options['ranges'])) {
+                $this->options['ranges'] =  [
+                    __('daterangepickerhelper::messages.today') => [
+                        'DateTime.now().setZone("' . $this->options['zone'] . '").startOf("day")', 
+                        'DateTime.now().setZone("' . $this->options['zone'] . '").endOf("day")'
+                    ],
+                    __('daterangepickerhelper::messages.yesterday') => [
+                        'DateTime.now().minus({ days: 1 }).setZone("' . $this->options['zone'] . '").startOf("day")', 
+                        'DateTime.now().minus({ days: 1 }).setZone("' . $this->options['zone'] . '").endOf("day")'
+                    ],
+                    __('daterangepickerhelper::messages.last7d') => [
+                        'DateTime.now().minus({ days: 6 }).setZone("' . $this->options['zone'] . '").startOf("day")',
+                        'DateTime.now().setZone("' . $this->options['zone'] . '").endOf("day")'
+                    ],
+                    __('daterangepickerhelper::messages.last30d') => [
+                        'DateTime.now().minus({ days: 29 }).setZone("' . $this->options['zone'] . '").startOf("day")',
+                        'DateTime.now().setZone("' . $this->options['zone'] . '").endOf("day")'
+                    ],
+                    __('daterangepickerhelper::messages.thismonth') => [
+                        'DateTime.now().startOf("month").setZone("' . $this->options['zone'] . '").startOf("day")', 
+                        'DateTime.now().endOf("month").setZone("' . $this->options['zone'] . '").endOf("day")', 
+                    ],
+                    __('daterangepickerhelper::messages.lastmonth') => [
+                        'DateTime.now().minus({ months: 1 }).startOf("month").setZone("' . $this->options['zone'] . '").startOf("day")',  
+                        'DateTime.now().minus({ months: 1 }).endOf("month").setZone("' . $this->options['zone'] . '").endOf("day")'
+                    ]
+                ];
+            }
         } else {
             throw new \Exception('wrong option');
         }
@@ -74,7 +103,7 @@ class DateRangePickerProvider {
         }
         if ($this->options['timePicker']) {
             $this->carboninput = $this->options["carboninputdatetime"];
-            $this->momentinput = $this->options["momentinputdatetime"];
+            $this->luxoninput = $this->options["luxoninputdatetime"];
             if ($this->options["timePickerSeconds"]) {
                 $this->formatdisplay = $this->options["formatdisplaytimeseconds"];
                 $this->carbonformat = $this->options["carbonformattimeseconds"];
@@ -84,7 +113,7 @@ class DateRangePickerProvider {
             }
         } else {
             $this->carboninput = $this->options["carboninputdate"];
-            $this->momentinput = $this->options["momentinputdate"];
+            $this->luxoninput = $this->options["luxoninputdate"];
             $this->formatdisplay = $this->options["formatdisplay"];
             $this->carbonformat = $this->options["carbonformat"];
         }
@@ -110,25 +139,56 @@ class DateRangePickerProvider {
         }
     }
 
+    private function buildCalIcon(): string{
+        if (stringy($this->options['icon'])->startswith('<')){
+            return $this->options['icon'];
+        }else{
+            return '<em class="' . $this->options['icon'] . '"></em>';
+        }
+    }
+
+    private function buildJsCalIcon(): string{
+        $icon = stringy($this->options['icon']);
+        if ($icon->startswith('<')){
+            return "'" . $icon->replace("'", '"') . "'";
+        }else{
+            return '$("<em/>").addClass("' . $this->options['icon'] .'")';
+        }
+    }
+
     public function printTags() : string {
         $sStr = '<div id="' . $this->calendarElement . '" class="' . $this->options['formdivclass'] . '">' . PHP_EOL .
                 '<label class="' . $this->options['formlabelclass'] .
                 '" for="' . $this->calendarElement . '">' . $this->options['formlabel'] . '</label>' . PHP_EOL;
         $sStr .= "<div id=\"" . $this->calendarElement . "-caldiv\" class=\"" . $this->options["caldivclass"] . "\">\n";
-        $sStr .= $this->options['icon'] . '&nbsp;';
+        $sStr .= $this->buildCalIcon() . '&nbsp;';
         $sStr .= "<span id=\"" . $this->calendarElement . "-span\">" . $this->start->format($this->carbonformat) . ($this->options['singleDatePicker'] ? '' : $this->options['dateseparator'] .
                 $this->end->format($this->carbonformat));
-        $sStr .= "</span> <b class=\"fas fa-angle-down caret\"></b>";
+        $sStr .= "</span>&nbsp;<em class=\"fas fa-angle-down caret\"></em>";
         if ($this->options['usehiddeninputs']) {
+            $sStr .= PHP_EOL . '<input type="hidden" id="' . $this->inputDateId . '" name="' . $this->inputDateName . '" value="' . $this->start->format($this->carboninput) . '"/>';
             if (!$this->options['singleDatePicker']) {
-                $sStr .= PHP_EOL . '<input type="hidden" id="' . $this->inputDateId . '" name="' . $this->inputDateName . '" value="' . $this->start->format($this->carboninput) . '"/>';
                 $sStr .= PHP_EOL . '<input type="hidden" id="' . $this->inputDateEndId . '" name="' . $this->inputDateEndName . '" value="' . $this->end->format($this->carboninput) . '"/>';
-            } else {
-                $sStr .= PHP_EOL . '<input type="hidden" id="' . $this->inputDateId . '" name="' . $this->inputDateName . '" value="' . $this->start->format($this->carboninput) . '"/>';
             }
         }
         $sStr .= PHP_EOL . "</div>\n";
         $sStr .= "</div>\n";
+        return $sStr;
+    }
+
+    public function insertJsTags($caldiv = 'caldiv', $label = 'label', $inner = 'inner', $span = 'span', $caret = 'caret') {
+        $sStr = "var " . $label . " = $('<label/>').addClass('" . $this->options['formlabelclass'] . "').attr('for', '" . $this->calendarElement . "').html('" . addslashes($this->options['formlabel']) . "');\n";
+        $sStr .= "var " . $inner . " = $('<div/>').attr('id', '" . $this->calendarElement . "-caldiv').addClass('" . $this->options['caldivclass'] . "');\n";
+        $sStr .= "var " . $span ." = $('<span/>').attr('id', '" . $this->calendarElement . "-span').append('" . $this->options['caldivclass'] . "').html('" .  $this->start->format($this->carbonformat) . ($this->options['singleDatePicker'] ? '' : $this->options['dateseparator'] . $this->end->format($this->carbonformat)). "');\n";
+        $sStr .= "var ". $caret . " = $('<em/>').addClass('fas fa-angle-down caret');\n";
+        $sStr .= $inner . ".append(". $this->buildJsCalIcon() . ").append('&nbsp;').append(". $span . ").append('&nbsp;').append(". $caret . ");\n";
+        if ($this->options['usehiddeninputs']) {
+            $sStr .= $inner . ".append($('<input/>').attr('type', 'hidden').attr('id', '". $this->inputDateId . "').attr('name', '" . $this->inputDateName . "').val('". $this->start->format($this->carboninput) ."'));\n";
+            if (!$this->options['singleDatePicker']) {
+                $sStr .= $inner . ".append($('<input/>').attr('type', 'hidden').attr('id', '". $this->inputDateEndId . "').attr('name', '" . $this->inputDateEndName . "').val('". $this->end->format($this->carboninput) ."'));\n";
+            }
+        }
+        $sStr .= "var " . $caldiv . " = $('<div/>').attr('id', '" . $this->calendarElement . "').addClass('" . $this->options['formdivclass'] . "').append(" . $label . ").append(" . $inner . ");\n";
         return $sStr;
     }
 
@@ -156,15 +216,15 @@ class DateRangePickerProvider {
         }
         if ($this->options['timePicker']) {
             $sStr .= "timePicker: true, ";
-            if ($this->options['timePicker24Hour']) {
-                $sStr .= "timePicker24Hour: true, ";
-            }
-            if ($this->options['timePickerIncrement'] > 1) {
-                $sStr .= "timePickerIncrement: " . $this->options['timePickerIncrement'] . ", ";
-            }
-            if ($this->options['timePickerSeconds']) {
-                $sStr .= "timePickerSeconds: true, ";
-            }
+        }
+        if ($this->options['timePicker24Hour']) {
+            $sStr .= "timePicker24Hour: true, ";
+        }
+        if ($this->options['timePickerIncrement'] > 1) {
+            $sStr .= "timePickerIncrement: " . $this->options['timePickerIncrement'] . ", ";
+        }
+        if ($this->options['timePickerSeconds']) {
+            $sStr .= "timePickerSeconds: true, ";
         }
         if (strlen($this->options['buttonClasses']) > 0) {
             $sStr .= "buttonClasses: '" . $this->options['buttonClasses'] . "', ";
@@ -186,7 +246,7 @@ class DateRangePickerProvider {
         } else {
             $ranges = '';
             foreach ($this->options['ranges'] as $label => $functions) {
-                $ranges .= (strlen($ranges) > 0 ? ", " : "") . "               '" . $this->translateOrPrint($label) . "' : [" . $functions[0] . ", " . $functions[1] . "]";
+                $ranges .= (strlen($ranges) > 0 ? ", " : "") . "'" . $this->translateOrPrint($label) . "' : [" . $functions[0] . ", " . $functions[1] . "]";
             }
             $sStr .= "ranges: {" . $ranges . "}, ";
             if (!$this->options['showCustomRangeLabel']) {
@@ -204,27 +264,31 @@ class DateRangePickerProvider {
         $sStr .= "weekLabel: \"" . $this->translateOrPrint($this->options['weeklabel']) . "\", ";
         $sStr .= "daysOfWeek: " . $this->outputarray($this->options['daysofweek']) . ", ";
         $sStr .= "monthNames: " . $this->outputarray($this->options['monthnames']) . ", ";
-        $sStr .= "firstDay: " . $this->options['firstday'] . "}, ";
-        $sStr .= "startDate: moment(\"" . $this->start->format($this->carboninput) . "\"), ";
-        $sStr .= "endDate: moment(\"" . $this->end->format($this->carboninput) . "\")";
+        $sStr .= "firstDay: " . $this->options['firstday'] . ', ';
+        $sStr .= 'zone: "' . $this->options['zone'] . '"}, ';
+        $sStr .= 'startDate: DateTime.fromSQL("' . $this->start->format($this->carboninput) . '").setZone("' . $this->options['zone'] . '"), ';
+        $sStr .= 'endDate: DateTime.fromSQL("' . $this->end->format($this->carboninput) . '").setZone("' . $this->options['zone'] . '")';
         if (!is_null($this->min)) {
-            $sStr .= ", minDate: moment(\"" . $this->min->format($this->carboninput) . "\")";
+            $sStr .= ', minDate: DateTime.fromSQL("' . $this->min->format($this->carboninput) . '").setZone("' . $this->options['zone'] . '")';
         }
         if (!is_null($this->max)) {
-            $sStr .= ", maxDate: moment(\"" . $this->max->format($this->carboninput) . "\")";
+            $sStr .= ', maxDate: DateTime.fromSQL("' . $this->max->format($this->carboninput) . '").setZone("' . $this->options['zone'] . '")';
         }
         $sStr .= "}, ";
         if ($this->options['singleDatePicker']) {
             if ($this->options['usehiddeninputs']) {
-                $sStr .= '"' . $this->inputDateId . '", ';
+                $sStr .= '"' . $this->inputDateId . '","",';
+            } else {
+                $sStr .= '"","",';
             }
         } else {
             if ($this->options['usehiddeninputs']) {
-                $sStr .= '"' . $this->inputDateId . '", ';
-                $sStr .= '"' . $this->inputDateEndId . '", ';
+                $sStr .= '"' . $this->inputDateId . '","' . $this->inputDateEndId . '",';
+            } else {
+                $sStr .= '"","",';
             }
         }
-        $sStr .= '"' . $this->momentinput . '", ';
+        $sStr .= '"' . $this->luxoninput . '", ';
         if (strlen($this->options['submitfunction']) > 0) {
             $sStr .= "function(start, end, label) {" . $this->options['submitfunction'] . "}";
         } else {
@@ -258,36 +322,36 @@ class DateRangePickerProvider {
         return $sStr;
     }
 
-    public function setSingleCalendar($momentdate) {
-        return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').setSingleCalendar(" . $momentdate . ");";
+    public function setSingleCalendar($luxondate) {
+        return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').setSingleCalendar(" . $luxondate . ");";
     }
 
-    public function setDoubleCalendar($momentstartdate, $momentenddate) {
-        return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').setDoubleCalendar(" . $momentstartdate . "," . $momentenddate . ");";
+    public function setDoubleCalendar($luxonstartdate, $luxonenddate) {
+        return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').setDoubleCalendar(" . $luxonstartdate . "," . $luxonenddate . ");";
     }
 
-    public function setStartDate($momentdate) {
-        return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').setStartDate(" . $momentdate . ");";
+    public function setStartDate($luxondate) {
+        return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').setStartDate(" . $luxondate . ");";
     }
 
-    public function setEndDate($momentdate) {
-        return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').setEndDate(" . $momentdate . ");";
+    public function setEndDate($luxondate) {
+        return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').setEndDate(" . $luxondate . ");";
     }
 
-    public function setCalLabelSingle($momentdate) {
-        return "$('#" . $this->calendarElement . " span').html(" . $momentdate . ".format('" . $this->options["formatdisplay"] . "'));";
+    public function setCalLabelSingle($luxondate) {
+        return "$('#" . $this->calendarElement . " span').html(" . $luxondate . ".toFormat('" . $this->options["formatdisplay"] . "'));";
     }
 
-    public function setCalLabelDouble($momentstartdate, $momentenddate) {
-        return "$('#" . $this->calendarElement . " span').html(" . $momentstartdate . ".format('" . $this->options["formatdisplay"] .
-                "') + '" . $this->options['dateseparator'] . "' + " . $momentstartdate . ".format('" . $this->options["formatdisplay"] . "'));";
+    public function setCalLabelDouble($luxonstartdate, $luxonenddate) {
+        return "$('#" . $this->calendarElement . " span').html(" . $luxonstartdate . ".toFormat('" . $this->options["formatdisplay"] .
+                "') + '" . $this->options['dateseparator'] . "' + " . $luxonstartdate . ".toFormat('" . $this->options["formatdisplay"] . "'));";
     }
 
     public function getStartDate() {
         if ($this->options['usehiddeninputs']) {
             return "$('#" . $this->inputDateId . "').val()";
         } else {
-            return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').startDate().format('" . $this->options["momentinputdate"] . "')";
+            return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').startDate().toFormat('" . $this->options["luxoninputdate"] . "')";
         }
     }
 
@@ -295,7 +359,7 @@ class DateRangePickerProvider {
         if ($this->options['usehiddeninputs']) {
             return "$('#" . $this->inputDateEndId . "').val()";
         } else {
-            return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').endDate().format('" . $this->options["momentinputdate"] . "')";
+            return "$('#" . $this->calendarElement . "').data('sebdaterangepicker').endDate().toFormat('" . $this->options["luxoninputdate"] . "')";
         }
     }
 
@@ -328,8 +392,8 @@ class DateRangePickerProvider {
                 'maxSpan' => 'is_string',
                 'maxYear' => 'is_numeric',
                 'minYear' => 'is_numeric',
-                'momentinputdate' => 'is_string',
-                'momentinputdatetime' => 'is_string',
+                'luxoninputdate' => 'is_string',
+                'luxoninputdatetime' => 'is_string',
                 'carboninputdate' => 'is_string',
                 'carboninputdatetime' => 'is_string',
                 'formatdisplay' => 'is_string',
@@ -375,7 +439,8 @@ class DateRangePickerProvider {
                 "showCalendar.daterangepicker" => 'is_string',
                 "hideCalendar.daterangepicker" => 'is_string',
                 "apply.daterangepicker" => 'is_string',
-                "cancel.daterangepicker" => 'is_string'
+                "cancel.daterangepicker" => 'is_string',
+                'zone' => 'is_string',
             );
             $aKeys = array_keys($aCheckOptions);
             foreach ($aOptions as $sKey => $sValue) {

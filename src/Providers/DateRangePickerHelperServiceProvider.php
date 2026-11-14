@@ -1,9 +1,11 @@
 <?php
 
-namespace Seblhaire\DateRangePickerHelper;
+namespace Seblhaire\DateRangePickerHelper\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App;
+use Seblhaire\DateRangePickerHelper\Services\DateRangePickerHelperService;
+use Seblhaire\DateRangePickerHelper\Contracts\DateRangePickerHelperServiceContract;
 
 class DateRangePickerHelperServiceProvider extends ServiceProvider {
 
@@ -15,10 +17,10 @@ class DateRangePickerHelperServiceProvider extends ServiceProvider {
      * @return void
      */
     public function boot() {
-        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'daterangepickerhelper');
+        $this->loadTranslationsFrom(__DIR__ . '/../../lang', 'daterangepickerhelper');
         $this->publishes([
-            __DIR__ . '/../config/daterangepickerhelper.php' => config_path('vendor/seblhaire/daterangepickerhelper.php'),
-            __DIR__ . '/../lang' => resource_path('lang/vendor/daterangepickerhelper'),
+            __DIR__ . '/../../config/daterangepickerhelper.php' => config_path('vendor/seblhaire/daterangepickerhelper.php'),
+            __DIR__ . '/../../lang' => resource_path('lang/vendor/daterangepickerhelper'),
         ]);
     }
 
@@ -30,7 +32,7 @@ class DateRangePickerHelperServiceProvider extends ServiceProvider {
     public function register() {
 
         $this->mergeConfigFrom(
-                __DIR__ . '/../config/daterangepickerhelper.php', 'daterangepickerhelper'
+                __DIR__ . '/../../config/daterangepickerhelper.php', 'daterangepickerhelper'
         );
         $this->app->singleton('DateRangePickerHelperService', function ($app) {
             return new DateRangePickerHelperService();

@@ -1,5 +1,6 @@
 import $ from 'jquery';
-import * as dayjs from 'dayjs';
+import { DateTime } from "luxon";
+import './daterangepicker.js';
 var SebDateRangePicker = {
     maindiv: null,
     caldiv: null,
@@ -9,12 +10,12 @@ var SebDateRangePicker = {
     content: null,
     startdate: null,
     enddate: null,
-    phpformat: null,
+    luxonformat: null,
     customcallback: null,
     currentdate: null,
     initialstart: null,
     initialend: null,
-    init: function (div, options, start, end, phpformat, customcallback) {
+    init: function (div, options, start, end, luxonformat, customcallback) {
         this.maindiv = $(div);
         this.options = options;
         this.initialstart = this.options.startDate;
@@ -25,7 +26,7 @@ var SebDateRangePicker = {
             this.startdate = $('#' + start);
         if (end.length > 0)
             this.enddate = $('#' + end);
-        this.phpformat = phpformat;
+        this.luxonformat = luxonformat;
         this.customcallback = customcallback;
         this.build();
         this.saveCurrentDate();
@@ -44,33 +45,33 @@ var SebDateRangePicker = {
     },
     setResult: function (start, end) {
         if (this.startdate != null)
-            this.startdate.val(start.format(this.phpformat));
+            this.startdate.val(start.toFormat(this.luxonformat));
         if (this.enddate != null)
-            this.enddate.val(end.format(this.phpformat));
-        var span = start.format(this.options.locale.format);
+            this.enddate.val(end.toFormat(this.luxonformat));
+        var span = start.toFormat(this.options.locale.format);
         if (!this.options.singleDatePicker) {
-            span += this.options.locale.separator + end.format(this.options.locale.format);
+            span += this.options.locale.separator + end.toFormat(this.options.locale.format);
         }
         this.calspan.html(span);
     },
-    setStartDate: function (momentdate) {
-        return this.calobj.setStartDate(momentdate);
+    setStartDate: function (luxondate) {
+        return this.calobj.setStartDate(luxondate);
     },
-    setSingleCalendar: function (momentdate) {
-        this.setStartDate(momentdate);
-        this.setEndDate(momentdate);
-        this.setResult(momentdate, null);
+    setSingleCalendar: function (luxondate) {
+        this.setStartDate(luxondate);
+        this.setEndDate(luxondate);
+        this.setResult(luxondate, null);
     },
-    setDoubleCalendar: function (momentstartdate, momentenddate) {
-        this.setStartDate(momentstartdate);
-        this.setEndDate(momentenddate);
-        this.setResult(momentstartdate, momentenddate);
+    setDoubleCalendar: function (luxonstartdate, luxonenddate) {
+        this.setStartDate(luxonstartdate);
+        this.setEndDate(luxonenddate);
+        this.setResult(luxonstartdate, luxonenddate);
     },
     startDate: function () {
         return this.calobj.startDate;
     },
-    setEndDate: function setEndDate(momentdate) {
-        return this.calobj.setEndDate(momentdate);
+    setEndDate: function setEndDate(luxondate) {
+        return this.calobj.setEndDate(luxondate);
     },
     endDate: function () {
         return this.calobj.endDate;
@@ -104,7 +105,7 @@ if (typeof Object.create !== 'function') {
 
 (function ($) {
     /* Create plugin */
-    $.fn.sebDateRangePicker = function (options, start, end, phpformat, customcallback) {
+    $.fn.sebDateRangePicker = function (options, start, end, luxonformat, customcallback) {
         return this.each(function () {
             var element = $(this);
             if (element.prop('tagName') != 'DIV')
@@ -113,7 +114,7 @@ if (typeof Object.create !== 'function') {
             if (element.data('sebdaterangepicker'))
                 return element.data('sebdaterangepicker');
             var sebdaterangepicker = Object.create(SebDateRangePicker);
-            sebdaterangepicker.init(this, options, start, end, phpformat, customcallback);
+            sebdaterangepicker.init(this, options, start, end, luxonformat, customcallback);
             // pass options to plugin constructor
             element.data('sebdaterangepicker', sebdaterangepicker);
         });
